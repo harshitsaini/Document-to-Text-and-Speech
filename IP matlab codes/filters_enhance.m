@@ -1,0 +1,113 @@
+A=imread('cameraman.tif'); %Read in image
+subplot(1,2,1), imshow(A); %Display image
+func=@(x) min(x(:)); %Set filter to apply
+B=nlfilter(A,[3 3],func); %Apply over 3  3 neighbourhood
+%uint8(mean()))
+subplot(1,2,2), imshow(B); %Display result image B
+func=@(x) uint8(mean(x(:))); %Set filter to apply
+B=nlfilter(A,[3 3],func); %Apply over 3  3 neighbourhood
+%uint8(mean()))
+subplot(1,2,2), imshow(B); %Display result image B
+
+A=imread('peppers.png'); %Read in image
+subplot(1,2,1), imshow(A); %Display image
+k=fspecial('motion', 50, 54); %Create a motion blur convolution kernel
+B=imfilter(A, k,'symmetric'); %Apply using symmetric mirroring at edges
+subplot(1,2,2), imshow(B); %Display result image B
+
+I=imread('eight.tif'); %Read in image
+subplot(1,3,1), imshow(I); %Display image
+Isp=imnoise(I,'salt & pepper',0.03); %Add 3% (0.03) salt and pepper noise
+subplot(1,3,2), imshow(Isp); %Display result image Isp
+Ig=imnoise(I,'gaussian',0.02); %Add Gaussian noise (with 0.02 variance)
+subplot(1,3,3), imshow(Ig); %Display result image Ig
+
+k=ones(3,3)/9; %Define mean filter
+I =imfilter(I,k); %Apply to original image
+Isp =imfilter(Isp,k); %Apply to salt and pepper image
+Ig =imfilter(Ig,k); %Apply to Gaussian image
+subplot(1,3,1), imshow(I); %Display result image
+subplot(1,3,2), imshow(Isp); %Display result image
+subplot(1,3,3), imshow(Ig); %Display result image
+
+%MEDIAN FILTER 
+I=medfilt2(I,[3 3]); %Apply to original image
+Isp =medfilt2(Isp,[3 3]); %Apply to salt and pepper image
+Ig =medfilt2(Ig,[3 3]); %Apply to Gaussian image
+subplot(1,3,1), imshow(I); %Display result image
+subplot(1,3,2), imshow(Isp); %Display result image
+subplot(1,3,3), imshow(Ig); %Display result image
+
+%RANK FILTER
+I =ordfilt2(I,25,ones(5,5)); %Apply to original image
+Isp =ordfilt2(Isp,25,ones(5,5)); %Apply to salt and pepper image
+Ig =ordfilt2(Ig,25,ones(5,5)); %Apply to Gaussian image
+subplot(1,3,1), imshow(I); % %Display result image
+subplot(1,3,2), imshow(Isp); %Display result image
+subplot(1,3,3), imshow(Ig); %Display result image
+
+k=fspecial('gaussian', [5 5], 2); %Define Gaussian filter
+I =imfilter(I,k); %Apply to original image
+Isp =imfilter(Isp,k); %Apply to salt and pepper image
+Ig =imfilter(Ig,k); %Apply to Gaussian image
+subplot(1,3,1), imshow(I); %Display result image
+subplot(1,3,2), imshow(Isp); %Display result image
+subplot(1,3,3), imshow(Ig); %Display result image
+
+% EDGE DETECTION %
+I=imread('circuit.tif'); %Read in image
+IEr = edge(I,'roberts'); %Roberts edges
+IEp = edge(I,'prewitt'); %Prewitt edges
+IEs = edge(I,'sobel'); %Sobel edges
+subplot(2,2,1), imshow(I); %Display image
+subplot(2,2,2), imshow(IEr); %Display image
+subplot(2,2,3), imshow(IEp); %Display image
+subplot(2,2,4), imshow(IEs); %Display image
+
+I=rgb2gray(imread('peppers.png')); %Read in image (in grey scale)
+k=fspecial('laplacian'); %Create Laplacian filter
+IEl=imfilter(double(I),k,'symmetric'); %Laplacian edges
+subplot(1,2,1), imagesc(I); %Display image
+subplot(1,2,2), imagesc(IEl); %Display image
+colormap('gray');
+
+I=rgb2gray(imread('peppers.png')); %Read in image (in grey scale)
+k=fspecial('log', [10 10], 3.0); %Create LoG filter
+IEzc = edge(I, 'zerocross', [], k); %Zero crossing edges (auto thresholded)
+subplot(1,2,1), imshow(I); %Display image
+subplot(1,2,2), imshow(IEzc); %Display image
+
+%edge enhancement
+A=imread('cameraman.tif'); %Read in image
+h=fspecial('laplacian', 0.3); %Generate 3  3 Laplacian filter
+B=imfilter(A,h); %Filter image with Laplacian kernel
+C=imsubtract(A,B); %Subtract Laplacian from original.
+subplot(1,3,1), imshow(A);
+subplot(1,3,2), imagesc(B); axis image; axis off %Display original, Laplacian and
+subplot(1,3,3), imshow(C); %enhanced image
+
+% log operater
+  h=fspecial('log',[10 10], 3.0); %Generate 3  3 Laplacian filter
+B=imfilter(A,h); %Filter image with Laplacian kernel
+C=imsubtract(A,B); %Subtract Laplacian from original.
+subplot(1,3,1), imshow(A);
+subplot(1,3,2), imagesc(B); axis image; axis off %Display original, Laplacian and
+subplot(1,3,3), imshow(C); %enhanced image
+
+
+% Unsharp mask filter %
+A=imread('cameraman.tif'); %Read in image
+Iorig=imread('cameraman.tif'); %Read in image
+g=fspecial('gaussian',[5 5],1.5); %Generate Gaussian kernel
+subplot(2,3,1), imshow(Iorig); %Display original image
+Is=imfilter(Iorig,g); %Create smoothed image by filtering
+Ie=(Iorig-Is); %Get difference image
+subplot(2,3,2), imshow(Ie); %Display unsharp difference
+Iout=Iorig+(0.3).*Ie; %Add k  difference image to original
+subplot(2,3,3), imshow(Iout);
+Iout=Iorig+(0.5).*Ie; %Add k  difference image to original
+subplot(2,3,4), imshow(Iout);
+Iout=Iorig+(0.7).*Ie; %Add k  difference image to original
+subplot(2,3,5), imshow(Iout);
+Iout=Iorig+(2.0).*Ie; %Add k  difference image to original
+subplot(2,3,6), imshow(Iout);

@@ -1,0 +1,55 @@
+A=imread('coins_and_keys.png');
+subplot(1,2,1), imshow(A);
+%Read in image and display
+bw=~im2bw(rgb2gray(A),0.35); bw=imfill(bw,'holes'); %Threshold and fill in holes
+bw=imopen(bw,ones(5)); subplot(1,2,2), imshow(bw,[0 1]); %Morphological opening
+[L,num]=bwlabel(bw); %Create labelled image
+s=regionprops(L,'area','perimeter'); %Calculate region properties
+for i=1:num %Object's area and perimeter
+x(i)=s(i).Area;
+y(i)=s(i).Perimeter;
+form(i)=4.*pi.*x(i)./(y(i).^2); %Calculate form factor
+end
+figure; plot(x./max(x),form,'ro'); %Plot area against form factor
+
+
+%%%%%%%%%%%%%%%%%HU MOMENTS%%%%%%%%%%%%
+
+A=rgb2gray(imread('spanners.png')); %Read in image, convert to grey
+bwin=~im2bw(A,0.5); %Threshold and display
+[L, num]=bwlabel(bwin); %Create labelled image
+subplot (2,2,1), imshow(A); %Display input image
+for i=1:num %Loop through each labelled object
+I=zeros(size(A)); %array for ith object
+ind=find(L==i); I(ind)=1; %Find pixels belonging to ith object and set=1
+subplot(2, 2, i+1), imshow(I); %Display identified object
+%I=double(bw)./(sum(sum(bw)));
+[rows,cols]=size(I); x=1:cols;y=1:rows; %get indices
+[X,Y]=meshgrid(x,y); %Set up grid for calculation
+%calculate required ordinary moments
+M_00=sum(sum(I));
+M_10=sum(sum(X.*I)); M 01=sum(sum(Y.*I));
+xav=M 10./M 00; yav=M 01./M 00;
+X=X xav; Y=Y yav; %mean subtract the X and Y coordinates
+hold on; plot(M 10,M 01,‘ko’); drawnow
+%calculate required central moments
+M 11=sum(sum(X.*Y.*I));
+M 20=sum(sum(X.^2.*I)); M 02=sum(sum(Y.^2.*I));
+M 21=sum(sum(X.^2.*Y.*I)); M 12=sum(sum(X.*Y.^2.*I));
+M 30=sum(sum(X.^3.*I)); M 03=sum(sum(Y.^3.*I));
+%calculate normalised central moments
+eta 11=M 11./M 00.^2;
+eta 20=M 20./M 00.^2;
+eta 02=M 02./M 00.^2;
+eta 21=M 21./M 00.^(5./2);
+eta 12=M 12./M 00.^(5./2);
+eta 30=M 30./M 00.^(5./2);
+eta 03=M 02./M 00.^(5./2);
+%calculate Hu moments
+Hu 1=eta 20 + eta 02;
+Hu 2=(eta 20 eta 02).^2 + (2.*eta 11).^2;
+Hu 3=(eta 30 3.*eta 12).^2 + (3.*eta 21 eta 03).^2;
+s=sprintf(‘Object number is %d’, i)
+s=sprintf(‘Hu invariant moments are %f %f %f ’,Hu 1,Hu 2,Hu 3)
+pause;
+end

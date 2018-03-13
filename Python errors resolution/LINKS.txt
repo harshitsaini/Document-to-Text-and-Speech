@@ -1,0 +1,6 @@
+tesseract error----> https://github.com/madmaze/pytesseract/issues/50
+https://github.com/madmaze/pytesseract/issues/50
+https://github.com/madmaze/pytesseract/issues/65
+
+pyterresact error---->https://stackoverflow.com/questions/34225927/pytesseract-cannot-find-the-file-specified
+https://stackoverflow.com/questions/31217647/error-using-pytesser-winerror-2-the-system-cannot-find-the-file-specified

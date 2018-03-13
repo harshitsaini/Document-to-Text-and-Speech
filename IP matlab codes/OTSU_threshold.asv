@@ -1,0 +1,13 @@
+%------------OTSU THESHOLDING-----------%
+I=imread('coins.png'); %Read in image
+level=graythresh(I); %Get OTSU threshold
+It=im2bw(I, level); %Threshold image
+imshow(It); %Display it
+
+%-----------ADAPTIVE THRESHOLDING-------%
+I=imread('rice.png'); %Read in image
+Im=imfilter(I,fspecial('average',[1 1]),'replicate'); %Create mean image
+It=I (Im-20); %Subtract mean image(þ constant C¼20)
+Ibw=im2bw(It,0); %Threshold result at 0 (keep þve results only)
+subplot(1,2,1), imshow(I); %Display image
+subplot(1,2,2), imshow(Ibw); %Display result
