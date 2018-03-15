@@ -3,7 +3,8 @@ import cv2
 from PIL import Image
 from pytesseract import *
 import numpy as np
-src_path= 'C://Users//Harshit//Desktop//Initial_img//Machine Printed//Spanish2//'
+
+src_path= 'C://Users//Harshit//Desktop//Machine Learning//Image Analysis//Output Images//Machine Printed//Spanish2//'
 
 import pytesseract
 #pytesseract.pytesseract.tesseract_cmd = 'H://Program Files (x86)//Tesseract-OCR//tesseract'
@@ -15,16 +16,15 @@ tessdata_dir_config = '--tessdata-dir "<replace_with_your_tessdata_dir_path>"'
 # Example config: '--tessdata-dir "C:\\Program Files (x86)\\Tesseract-OCR\\tessdata"'
 # It's important to include double quotes around the dir path.
 pytesseract.image_to_string(image, lang='chi_sim', config=tessdata_dir_config)
-
 '''
 
 def get_string (img_path):
     img=cv2.imread(img_path)
 
-# IMAGE CONDITIONING
+ # IMAGE CONDITIONING
     img= cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
  # THRESHOLDING
-   #ret, img = cv2.threshold(img, 36, 255, cv2.THRESH_BINARY)
+    #ret, img = cv2.threshold(img, 36, 255, cv2.THRESH_BINARY)
     #img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 115, 1)
     img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 11, 2)
     cv2.imwrite(src_path+'thresholded.png',img)
