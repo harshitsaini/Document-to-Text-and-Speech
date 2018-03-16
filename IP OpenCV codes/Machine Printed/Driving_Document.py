@@ -83,12 +83,13 @@ def get_string0(img_path):
     conditioned = getMorph(edges, 3, 5, False)
     final= conditioned
 
-    [a, contours, c] = cv2.findContours(final, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    #[a, contours, c] = cv2.findContours(final, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     print(len(contours))
 
     cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
 
-    #print(contours[0])
+    '''#print(contours[0])
     inf= 1000000000000
 
     txt_cdts=[]
@@ -104,10 +105,11 @@ def get_string0(img_path):
         txt_cdts.append(Min,Max)
 
     print(contours[0])
-    #cv2.imshow('threshed', final)
-    #cv2.imshow('oh yeah', img)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    print(txt_cdts[0])'''
+    '''   cv2.imshow('threshed', final)
+    cv2.imshow('oh yeah', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()'''
     ###################################################################################
 
     cv2.imwrite(src_path+ex_fl+'final.png',final)
