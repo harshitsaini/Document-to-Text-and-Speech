@@ -69,7 +69,7 @@ def img_show(*args):
 
 def get_string0(img_path):
     img=cv2.imread(img_path)
-    #print(type(img))
+    print(type(img))
     '''conditioned = getThresholded(img,True)#Dont know why i was smoothing my grayscale pic !!!???
     #conditioned = getMorph(conditioned,1,3,False)
     conditioned=getClosed(conditioned,3,3)
@@ -78,7 +78,7 @@ def get_string0(img_path):
     img = cv2.imread(src_path + ex_fl + "Driving_Document.png")
     edges = cv2.Canny(img, 100, 200)
     cv2.imwrite(src_path + 'canny.png', edges)
-    cv2.imshow('Edges',edges)
+    #cv2.imshow('Edges',edges)
     ##############################DEFINING CONTOURS####################################
     conditioned = getMorph(edges, 3, 5, False)
     final= conditioned
@@ -87,29 +87,34 @@ def get_string0(img_path):
     [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     print(len(contours))
 
-    cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+    #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+    #cv2.imshow('hahaa',c)
 
-    '''#print(contours[0])
-    inf= 1000000000000
+    #txt_blocks = np.empty()
 
-    txt_cdts=[]
-    txt_blocks=[]
-    for it in contours:
-        Min = [inf, inf]
-        Max = [-inf, -inf]
-        for kt in it:
-           Max[0]= max(it[0], Max[0])
-           Max[1]= max(it[1], Max[1])
-           Min[0] = min(it[0], Min[0])
-           Min[1] = min(it[1], Min[1])
-        txt_cdts.append(Min,Max)
-
-    print(contours[0])
-    print(txt_cdts[0])'''
     '''   cv2.imshow('threshed', final)
-    cv2.imshow('oh yeah', img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()'''
+    cv2.imshow('oh yeah', img)'''
+    it=1
+    for npaContour in contours:
+        [intX, intY, intW, intH] = cv2.boundingRect(npaContour)         # get and break out bounding rect
+
+                                                # draw rectangle around each contour as we ask user for input
+        cv2.rectangle(img,           # draw rectangle on original training image
+                          (intX, intY),                 # upper left corner
+                          (intX+intW,intY+intH),        # lower right corner
+                          (0, 0, 255),                  # red
+                          2)                            # thickness
+
+        imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
+        #txt_blocks.append(imgROI)
+        #cv2.imshow('oops',txt_blocks[npaContour])
+        #cv2.imshow('hj',imgROI)
+        #intChar = cv2.waitKey(0)
+        cv2.imwrite(src_path + ex_fl + 'blocks//block'+str(it)+'.png', imgROI)
+        it+=1
+
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
     ###################################################################################
 
     cv2.imwrite(src_path+ex_fl+'final.png',final)
