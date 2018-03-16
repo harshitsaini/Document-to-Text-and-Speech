@@ -71,6 +71,22 @@ def img_show(*args):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+def horizontal_dilation(img,iterations,kernel_size):
+    #kernel = np.ones((kernel_size, kernel_size), np.uint8)
+    '''ones = np.array([0, 1, 0])
+    zeroes = np.array([0, 1, 0])
+    #kernel = np.uint8(ones)
+    kernel= np.array([0, 1, 0])
+    # ones=np.ones(3,np.uint8)
+    # zeroes=np.zeros(3,np.uint8)
+    np.concatenate((kernel, ones), axis=1)zzz
+    np.concatenate((kernel, zeroes), axis=1)'''
+    kernel= np.array([[0,0,0],[1,1,1],[0,0,0]])
+
+    dilated = cv2.dilate(img, kernel, iterations=iterations)
+    cv2.imwrite(new_path + "dilated.png", dilated)
+    return dilated
+
 def get_blocks(img_path):
     ###########################CANNY EDGE DETECTION ###################################
     print(img_path)
@@ -78,7 +94,7 @@ def get_blocks(img_path):
     #print(img.dim)
     edges = cv2.Canny(img, 100, 200)
     cv2.imwrite(new_path + 'canny.png', edges)
-    cv2.imshow('Edges',edges)
+    #cv2.imshow('Edges',edges)
     ##############################DEFINING CONTOURS####################################
     conditioned = getMorph(edges, 3, 5, False)
     final= conditioned
@@ -86,22 +102,22 @@ def get_blocks(img_path):
     [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     print("No of text blocks detected are blocks :"+str(len(contours)))
 
-    cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+    #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
     it=1
     for npaContour in contours:
         [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
-        cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),2)
+        #cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),2)
 
         imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
-        cv2.imshow('block',imgROI)
-        intChar = cv2.waitKey(0)
+        #cv2.imshow('block',imgROI)
+        #intChar = cv2.waitKey(0)
         if not os.path.exists(new_path+'block'+str(it)+'//'):
             os.makedirs(new_path+'block'+str(it)+'//')
         cv2.imwrite(new_path+'block'+str(it)+'//'+'block.png', imgROI)
         it+=1
 
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
     ###################################################################################
 
     #cv2.imwrite(src_path+ex_fl+'final.png',final)
@@ -111,50 +127,48 @@ def get_blocks(img_path):
     return len(contours)
 
 def get_lines(img_path):
-    img=cv2.imread(img_path)
     ###########################CANNY EDGE DETECTION ###################################
     img = cv2.imread(img_path)
     edges = cv2.Canny(img, 100, 200)
-    cv2.imwrite(src_path+ex_fl +'block'+ str(block_no)+ '//canny.png', edges)
-    #cv2.imshow('Edges',edges)
+    cv2.imwrite(new_path + 'canny.png', edges)
+    cv2.imshow('Edges',edges)
     ##############################DEFINING CONTOURS####################################
-    conditioned = getMorph(edges, 3, 5, False)
+    #conditioned = getMorph(edges, 1, 3, False)
+    conditioned= horizontal_dilation(edges,9,9)
+
     final= conditioned
     #[a, contours, c] = cv2.findContours(final, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    print('This block have'+ str(len(contours)) +'lines')
-
+    print("No of text lines detected from this block are:"+str(len(contours)))
     #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
     it=1
     for npaContour in contours:
         [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
-        cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),2)
+        #cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),2)
 
         imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
         cv2.imshow('line',imgROI)
         intChar = cv2.waitKey(0)
-        line_path = src_path +ex_fl + 'block'+ str(block_no)+ '//line' + str(it) + '//'
-        if not os.path.exists(line_path):
-            os.makedirs(line_path)
-        cv2.imwrite(line_path + 'line' + str(it) + '.png', imgROI)
+        if not os.path.exists(new_path+'line'+str(it)+'//'):
+            os.makedirs(new_path+'line'+str(it)+'//')
+        cv2.imwrite(new_path+'line'+str(it)+'//'+'line.png', imgROI)
         it+=1
 
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     ###################################################################################
 
-    #cv2.imwrite(src_path+ex_fl+'final.png',final)
     #result= pytesseract.image_to_string(Image.open(src_path+ex_fl+'final.png'),lang='spa', config=tessdata_dir_config)
     #os.remove(temp)
     return len(contours)
 
 new_path= src_path+"Driving Document//"
-print('-----Start recognize text blocks from image -----')
+print('\n-----Start recognize text blocks from image -----')
 ltn= get_blocks(new_path+"Driving_Document.png")
 print("-------DONE-------\n\n")
 
-'''print('-----Start recognize Lines from block -----')
+print('-----Start recognize Lines from block -----')
 for it in range(1,ltn+1):
-    block_path = "Driving Document//block"+str(it)+'//'
-    get_lines(new_path+str(it)+'.png')
-print("-------Lines Extracted-------\n\n")'''
+    new_path = src_path +"Driving Document//block"+str(it)+'//'
+    get_lines(new_path+'block.png')
+print("-------Lines Extracted-------\n\n")
