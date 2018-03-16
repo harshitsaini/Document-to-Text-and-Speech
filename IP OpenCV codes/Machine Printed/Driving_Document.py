@@ -1,3 +1,4 @@
+import os
 import sys
 import cv2
 from PIL import Image
@@ -21,17 +22,16 @@ tessdata_dir_config = '--tessdata-dir "H:\\Program Files (x86)\\Tesseract-OCR\\t
     #os.makedirs(directory)
 
 
-ex_fl= ""
-
+ex_fl= "" ; new_path="" ; block_path="" ; line_path=""
 def getThresholded(img,smooth_it):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     if smooth_it==True:
         kernel = np.ones((10, 10), np.float32) / 100
         smooth = cv2.filter2D(img, -1, kernel)
-        cv2.imwrite(src_path +ex_fl+ "smoothened.png", smooth)
+        cv2.imwrite(new_path+ "smoothened.png", smooth)
         img=smooth
     threshed = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 151, 0)
-    cv2.imwrite(src_path +ex_fl+ 'thresholded.png',threshed)
+    cv2.imwrite(new_path+ 'thresholded.png',threshed)
     return threshed
 
 def getClosed(img,iterations,kernel_size):
@@ -41,7 +41,7 @@ def getClosed(img,iterations,kernel_size):
     while (k != 0):
         closed = cv2.morphologyEx(closed, cv2.MORPH_CLOSE, kernel)
         k -= 1
-    cv2.imwrite(src_path +ex_fl+ "closed.png", closed)
+    cv2.imwrite(new_path+ "closed.png", closed)
     return closed
 
 def getOpened(img,iterations,kernel_size):
@@ -51,18 +51,18 @@ def getOpened(img,iterations,kernel_size):
     while (k != 0):
         opened = cv2.morphologyEx(opened, cv2.MORPH_OPEN, kernel)
         k -= 1
-    cv2.imwrite(src_path +ex_fl+ "opened.png", opened)
+    cv2.imwrite(new_path+ "opened.png", opened)
     return opened
 
 def getMorph(img,iterations,kernel_size,erode_it):
     kernel = np.ones((kernel_size, kernel_size), np.uint8)
     if erode_it == True :
         eroded = cv2.erode(img, kernel, iterations=iterations)
-        cv2.imwrite(src_path +ex_fl+ 'eroded.png', eroded)
+        cv2.imwrite(new_path+ 'eroded.png', eroded)
         return eroded
     else:
         dilated= cv2.dilate(img, kernel, iterations=iterations)
-        cv2.imwrite(src_path +ex_fl+ "dilated.png", dilated)
+        cv2.imwrite(new_path+ "dilated.png", dilated)
         return dilated
 
 def img_show(*args):
@@ -74,16 +74,16 @@ def img_show(*args):
 def get_blocks(img_path):
     img=cv2.imread(img_path)
     ###########################CANNY EDGE DETECTION ###################################
-    img = cv2.imread(src_path + ex_fl + "Driving_Document.png")
+    img = cv2.imread(new_path + "Driving_Document.png")
     edges = cv2.Canny(img, 100, 200)
-    cv2.imwrite(src_path + 'canny.png', edges)
+    cv2.imwrite(new_path + 'canny.png', edges)
     #cv2.imshow('Edges',edges)
     ##############################DEFINING CONTOURS####################################
     conditioned = getMorph(edges, 3, 5, False)
     final= conditioned
     #[a, contours, c] = cv2.findContours(final, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    print("No of text blocks detected are blocks "+str(len(contours)))
+    print("No of text blocks detected are blocks :"+str(len(contours)))
 
     #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
     it=1
@@ -94,7 +94,9 @@ def get_blocks(img_path):
         imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
         #cv2.imshow('block',imgROI)
         #intChar = cv2.waitKey(0)
-        cv2.imwrite(src_path + ex_fl + 'blocks//block'+str(it)+'.png', imgROI)
+        if not os.path.exists(block_path):
+            os.makedirs(block_path)
+        cv2.imwrite(block_path+'block.png', imgROI)
         it+=1
 
     #cv2.waitKey(0)
@@ -107,20 +109,19 @@ def get_blocks(img_path):
     #os.remove(temp)
     return len(contours)
 
-def get_words(img_path):
-    
-    img=cv2.imread(img_path+'.png')
+def get_lines(img_path,block_no):
+    img=cv2.imread(img_path)
     ###########################CANNY EDGE DETECTION ###################################
-    img = cv2.imread(img_path+ ".png")
+    img = cv2.imread(img_path)
     edges = cv2.Canny(img, 100, 200)
-    cv2.imwrite(img_path + 'canny.png', edges)
+    cv2.imwrite(src_path+ex_fl +'block'+ str(block_no)+ '//canny.png', edges)
     #cv2.imshow('Edges',edges)
     ##############################DEFINING CONTOURS####################################
     conditioned = getMorph(edges, 3, 5, False)
     final= conditioned
     #[a, contours, c] = cv2.findContours(final, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    print('This block have'+ str(len(contours)) +'characters')
+    print('This block have'+ str(len(contours)) +'lines')
 
     #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
     it=1
@@ -129,9 +130,12 @@ def get_words(img_path):
         cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),2)
 
         imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
-        #cv2.imshow('block',imgROI)
-        #intChar = cv2.waitKey(0)
-        cv2.imwrite(img_path+ 'character'+str(it)+'.png', imgROI)
+        cv2.imshow('line',imgROI)
+        intChar = cv2.waitKey(0)
+        line_path = src_path +ex_fl + 'block'+ str(block_no)+ '//line' + str(it) + '//'
+        if not os.path.exists(line_path):
+            os.makedirs(line_path)
+        cv2.imwrite(line_path + 'line' + str(it) + '.png', imgROI)
         it+=1
 
     #cv2.waitKey(0)
@@ -143,15 +147,13 @@ def get_words(img_path):
     #os.remove(temp)
     return len(contours)
 
-ex_fl= "Driving Document//"
-print('-----Start recognize text from image -----')
-#print(get_string0(src_path+ex_fl+"Driving_Document.png"))
-ltn= get_string0(src_path+ex_fl+"Driving_Document.png")
+new_path= "Driving Document//"
+print('-----Start recognize text blocks from image -----')
+ltn= get_blocks(new_path+"Driving_Document.png")
 print("-------DONE-------\n\n")
 
-ex_fl= "Driving Document//blocks//"
-print('-----Start recognize text from image -----')
+print('-----Start recognize Lines from block -----')
 for it in range(1,ltn+1):
-    get_string1(src_path+ex_fl+'block'+str(it))
-    print("-------Characters Extracted-------\n\n")
-
+    block_path = "Driving Document//block"+str(it)+'//'
+    get_lines(new_path+str(it)+'.png')
+print("-------Lines Extracted-------\n\n")
