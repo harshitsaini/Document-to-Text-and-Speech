@@ -17,6 +17,10 @@ tessdata_dir_config = '--tessdata-dir "H:\\Program Files (x86)\\Tesseract-OCR\\t
     pytesseract.image_to_string(image, lang='chi_sim', config=tessdata_dir_config)
 '''
 
+#if not os.path.exists(directory):
+    #os.makedirs(directory)
+
+
 ex_fl= ""
 
 def getThresholded(img,smooth_it):
@@ -67,13 +71,8 @@ def img_show(*args):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def get_string0(img_path):
+def get_blocks(img_path):
     img=cv2.imread(img_path)
-    print(type(img))
-    '''conditioned = getThresholded(img,True)#Dont know why i was smoothing my grayscale pic !!!???
-    #conditioned = getMorph(conditioned,1,3,False)
-    conditioned=getClosed(conditioned,3,3)
-    final = conditioned'''
     ###########################CANNY EDGE DETECTION ###################################
     img = cv2.imread(src_path + ex_fl + "Driving_Document.png")
     edges = cv2.Canny(img, 100, 200)
@@ -82,33 +81,18 @@ def get_string0(img_path):
     ##############################DEFINING CONTOURS####################################
     conditioned = getMorph(edges, 3, 5, False)
     final= conditioned
-
     #[a, contours, c] = cv2.findContours(final, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    print(len(contours))
+    print("No of text blocks detected are blocks "+str(len(contours)))
 
     #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
-    #cv2.imshow('hahaa',c)
-
-    #txt_blocks = np.empty()
-
-    '''   cv2.imshow('threshed', final)
-    cv2.imshow('oh yeah', img)'''
     it=1
     for npaContour in contours:
-        [intX, intY, intW, intH] = cv2.boundingRect(npaContour)         # get and break out bounding rect
-
-                                                # draw rectangle around each contour as we ask user for input
-        cv2.rectangle(img,           # draw rectangle on original training image
-                          (intX, intY),                 # upper left corner
-                          (intX+intW,intY+intH),        # lower right corner
-                          (0, 0, 255),                  # red
-                          2)                            # thickness
+        [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
+        cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),2)
 
         imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
-        #txt_blocks.append(imgROI)
-        #cv2.imshow('oops',txt_blocks[npaContour])
-        #cv2.imshow('hj',imgROI)
+        #cv2.imshow('block',imgROI)
         #intChar = cv2.waitKey(0)
         cv2.imwrite(src_path + ex_fl + 'blocks//block'+str(it)+'.png', imgROI)
         it+=1
@@ -118,13 +102,56 @@ def get_string0(img_path):
     ###################################################################################
 
     cv2.imwrite(src_path+ex_fl+'final.png',final)
-    print('Conditioning Done !')
-    result= pytesseract.image_to_string(Image.open(src_path+ex_fl+'final.png'),lang='spa', config=tessdata_dir_config)
+    print('Blocks Extracted !')
+    #result= pytesseract.image_to_string(Image.open(src_path+ex_fl+'final.png'),lang='spa', config=tessdata_dir_config)
     #os.remove(temp)
-    return result
+    return len(contours)
+
+def get_words(img_path):
+    
+    img=cv2.imread(img_path+'.png')
+    ###########################CANNY EDGE DETECTION ###################################
+    img = cv2.imread(img_path+ ".png")
+    edges = cv2.Canny(img, 100, 200)
+    cv2.imwrite(img_path + 'canny.png', edges)
+    #cv2.imshow('Edges',edges)
+    ##############################DEFINING CONTOURS####################################
+    conditioned = getMorph(edges, 3, 5, False)
+    final= conditioned
+    #[a, contours, c] = cv2.findContours(final, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    print('This block have'+ str(len(contours)) +'characters')
+
+    #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+    it=1
+    for npaContour in contours:
+        [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
+        cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),2)
+
+        imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
+        #cv2.imshow('block',imgROI)
+        #intChar = cv2.waitKey(0)
+        cv2.imwrite(img_path+ 'character'+str(it)+'.png', imgROI)
+        it+=1
+
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+    ###################################################################################
+
+    #cv2.imwrite(src_path+ex_fl+'final.png',final)
+    #result= pytesseract.image_to_string(Image.open(src_path+ex_fl+'final.png'),lang='spa', config=tessdata_dir_config)
+    #os.remove(temp)
+    return len(contours)
 
 ex_fl= "Driving Document//"
 print('-----Start recognize text from image -----')
-print(get_string0(src_path+ex_fl+"Driving_Document.png"))
+#print(get_string0(src_path+ex_fl+"Driving_Document.png"))
+ltn= get_string0(src_path+ex_fl+"Driving_Document.png")
 print("-------DONE-------\n\n")
+
+ex_fl= "Driving Document//blocks//"
+print('-----Start recognize text from image -----')
+for it in range(1,ltn+1):
+    get_string1(src_path+ex_fl+'block'+str(it))
+    print("-------Characters Extracted-------\n\n")
 
