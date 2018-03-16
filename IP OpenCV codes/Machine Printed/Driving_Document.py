@@ -72,12 +72,13 @@ def img_show(*args):
     cv2.destroyAllWindows()
 
 def get_blocks(img_path):
-    img=cv2.imread(img_path)
     ###########################CANNY EDGE DETECTION ###################################
-    img = cv2.imread(new_path + "Driving_Document.png")
+    print(img_path)
+    img = cv2.imread(img_path)
+    #print(img.dim)
     edges = cv2.Canny(img, 100, 200)
     cv2.imwrite(new_path + 'canny.png', edges)
-    #cv2.imshow('Edges',edges)
+    cv2.imshow('Edges',edges)
     ##############################DEFINING CONTOURS####################################
     conditioned = getMorph(edges, 3, 5, False)
     final= conditioned
@@ -85,31 +86,31 @@ def get_blocks(img_path):
     [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     print("No of text blocks detected are blocks :"+str(len(contours)))
 
-    #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+    cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
     it=1
     for npaContour in contours:
         [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
         cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),2)
 
         imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
-        #cv2.imshow('block',imgROI)
-        #intChar = cv2.waitKey(0)
-        if not os.path.exists(block_path):
-            os.makedirs(block_path)
-        cv2.imwrite(block_path+'block.png', imgROI)
+        cv2.imshow('block',imgROI)
+        intChar = cv2.waitKey(0)
+        if not os.path.exists(new_path+'block'+str(it)+'//'):
+            os.makedirs(new_path+'block'+str(it)+'//')
+        cv2.imwrite(new_path+'block'+str(it)+'//'+'block.png', imgROI)
         it+=1
 
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
     ###################################################################################
 
-    cv2.imwrite(src_path+ex_fl+'final.png',final)
+    #cv2.imwrite(src_path+ex_fl+'final.png',final)
     print('Blocks Extracted !')
     #result= pytesseract.image_to_string(Image.open(src_path+ex_fl+'final.png'),lang='spa', config=tessdata_dir_config)
     #os.remove(temp)
     return len(contours)
 
-def get_lines(img_path,block_no):
+def get_lines(img_path):
     img=cv2.imread(img_path)
     ###########################CANNY EDGE DETECTION ###################################
     img = cv2.imread(img_path)
@@ -147,13 +148,13 @@ def get_lines(img_path,block_no):
     #os.remove(temp)
     return len(contours)
 
-new_path= "Driving Document//"
+new_path= src_path+"Driving Document//"
 print('-----Start recognize text blocks from image -----')
 ltn= get_blocks(new_path+"Driving_Document.png")
 print("-------DONE-------\n\n")
 
-print('-----Start recognize Lines from block -----')
+'''print('-----Start recognize Lines from block -----')
 for it in range(1,ltn+1):
     block_path = "Driving Document//block"+str(it)+'//'
     get_lines(new_path+str(it)+'.png')
-print("-------Lines Extracted-------\n\n")
+print("-------Lines Extracted-------\n\n")'''
