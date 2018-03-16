@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 
-src_path= 'C://Users//Harshit//Desktop//initial_img//'
+src_path= 'C://Users//Harshit//Desktop//Machine Learning//Image Analysis//Output Images//'
 shapes_img='shapes.jpg'
 
 class ShapeRecognition():

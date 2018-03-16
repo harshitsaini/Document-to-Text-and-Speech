@@ -14,6 +14,10 @@ img = cv2.imread('C:\\Users\\Harshit\\Desktop\\Machine Learning\\Image Analysis\
 
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
+cv2.imshow('gray',gray)
+cv2.waitKey(0)
+cv2.destroyAllWindows(0)
+
 # Now we split the image to 5000 cells, each 20x20 size
 cells = [np.hsplit(row,100) for row in np.vsplit(gray,50)]
 

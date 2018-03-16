@@ -74,7 +74,7 @@ def main():
 
             if intChar == 27:                   # if esc key was pressed
                 sys.exit()                      # exit program
-            elif intChar in intValidChars:      # else if the char is in the list of chars we are looking for . . .
+            elif intChar in intValidChars: 5     # else if the char is in the list of chars we are looking for . . .
 
                 intClassifications.append(intChar)                                                # append classification char to integer list of chars (we will convert to float later before writing to file)
 
