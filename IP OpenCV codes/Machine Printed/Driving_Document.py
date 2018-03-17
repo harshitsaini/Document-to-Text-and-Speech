@@ -7,6 +7,7 @@ import numpy as np
 import pytesseract
 
 src_path= 'C://Users//Harshit//Desktop//Machine Learning//Image Analysis//Output Images//Machine Printed//Document Bucket//'
+#src_path= 'C://Users//Harshit//Desktop//Machine Learning//Image Analysis//Output Images//Machine Printed//'
 #pytesseract.pytesseract.tesseract_cmd = 'H://Program Files (x86)//Tesseract-OCR//tesseract'
 pytesseract.pytesseract.tesseract_cmd = 'H:/Program Files (x86)/Tesseract-OCR/tesseract.exe'
 TESSDATA_PREFIX='H://Program Files (x86)//Tesseract-OCR'
@@ -21,7 +22,7 @@ tessdata_dir_config = '--tessdata-dir "H:\\Program Files (x86)\\Tesseract-OCR\\t
 #if not os.path.exists(directory):
     #os.makedirs(directory)
 
-
+answer=""
 ex_fl= "" ; new_path="" ; block_path="" ; line_path=""
 def getThresholded(img,smooth_it):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -98,8 +99,8 @@ def get_blocks(img_path):
     ##############################DEFINING CONTOURS####################################
     conditioned = getMorph(edges, 3, 5, False)
     final= conditioned
-    #[a, contours, c] = cv2.findContours(final, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    [a, contours, c] = cv2.findContours(final, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    #[a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     print("No of text blocks detected are blocks :"+str(len(contours)))
 
     #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
@@ -127,6 +128,7 @@ def get_blocks(img_path):
     return len(contours)
 
 def get_lines(img_path):
+    kt=""
     ###########################CANNY EDGE DETECTION ###################################
     img = cv2.imread(img_path)
     edges = cv2.Canny(img, 100, 200)
@@ -152,23 +154,52 @@ def get_lines(img_path):
         if not os.path.exists(new_path+'line'+str(it)+'//'):
             os.makedirs(new_path+'line'+str(it)+'//')
         cv2.imwrite(new_path+'line'+str(it)+'//'+'line.png', imgROI)
+        result = pytesseract.image_to_string(Image.open(new_path+'line'+str(it)+'//'+'line.png'), lang='eng', config=tessdata_dir_config)
+        kt= kt+" "+result
         it+=1
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     ###################################################################################
-
-    #result= pytesseract.image_to_string(Image.open(src_path+ex_fl+'final.png'),lang='spa', config=tessdata_dir_config)
     #os.remove(temp)
-    return len(contours)
+    return kt
 
 new_path= src_path+"Driving Document//"
-print('\n-----Start recognize text blocks from image -----')
-ltn= get_blocks(new_path+"Driving_Document.png")
-print("-------DONE-------\n\n")
+#new_path= src_path+ "Medical Report//"
+#new_path= src_path+ "Milstein-backing//"
+#new_path= src_path+ "Restraining_Order//"
+#new_path= src_path+ "Wachovia_bank_statement//"
+#new_path= src_path+ "Handwritten Recognition Using SVM, KNN and Neural Network//"
+#new_path= src_path+ "ID CARD//"
+#new_path= src_path+ "OCR_DOC//"
 
+print('\n-----Start recognize text blocks from image -----')
+ltn= get_blocks(new_path+"Driving_Document.png")                                           #Perfecta
+#ltn= get_blocks(new_path+"MEDICAL-REPORT.png")                                             #Have some redundancies
+#ltn= get_blocks(new_path+"milstein-backing.png")                                           #Too much noise
+#ltn= get_blocks(new_path+"Restraining_Order.png")
+#ltn= get_blocks(new_path+"Wachovia_National_Bank_1906_statement.png")                      #needs normalization
+#ltn= get_blocks(new_path+"Handwritten Recognition Using SVM, KNN and Neural Network.png")  #again normailzation
+#ltn= get_blocks(new_path+"opened.png")                                                      #NEEDS normalization and noise removal
+#ltn= get_blocks(new_path+"OCR_DOC.png")                                                      #NEEDS normalization and noise removal
+
+print("-------DONE-------\n\n")
+answer= ""
 print('-----Start recognize Lines from block -----')
 for it in range(1,ltn+1):
     new_path = src_path +"Driving Document//block"+str(it)+'//'
-    get_lines(new_path+'block.png')
+    #new_path = src_path +"Medical Report//block"+str(it)+'//'
+    #new_path= src_path+ "Milstein-backing//block"+str(it)+'//'
+    #new_path = src_path + "Restraining_Order//block" + str(it) + '//'
+    #new_path = src_path + "Wachovia_bank_statement//block" + str(it) + '//'
+    #new_path = src_path + "Handwritten Recognition Using SVM, KNN and Neural Network//block" + str(it) + '//'
+    #new_path = src_path + "ID CARD//block" + str(it) + '//'
+    #new_path = src_path + "OCR_DOC//block" + str(it) + '//'
+    answer+=get_lines(new_path+'block.png')
 print("-------Lines Extracted-------\n\n")
+
+print(answer)
+
+'''f = open('OutputText.txt','w')
+f.write(answer)
+f.close()'''
