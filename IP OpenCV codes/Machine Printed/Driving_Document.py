@@ -189,7 +189,7 @@ print('-----Start recognize Lines from block -----')
 for it in range(1,ltn+1):
     new_path = src_path +"Driving Document//block"+str(it)+'//'
     #new_path = src_path +"Medical Report//block"+str(it)+'//'
-    #new_path= src_path+ "Milstein-backing//block"+str(it)+'//'
+    #new_path= src_path+ "Milstein-backing//block"+str(it)+'//'z
     #new_path = src_path + "Restraining_Order//block" + str(it) + '//'
     #new_path = src_path + "Wachovia_bank_statement//block" + str(it) + '//'
     #new_path = src_path + "Handwritten Recognition Using SVM, KNN and Neural Network//block" + str(it) + '//'
