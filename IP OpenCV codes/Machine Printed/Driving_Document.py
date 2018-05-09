@@ -103,15 +103,15 @@ def get_blocks(img_path):
     #[a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     print("No of text blocks detected are blocks :"+str(len(contours)))
 
-    #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+    cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
     it=1
     for npaContour in contours:
         [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
         #cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),2)
 
         imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
-        #cv2.imshow('block',imgROI)
-        #intChar = cv2.waitKey(0)
+        cv2.imshow('block',imgROI)
+        intChar = cv2.waitKey(0)
         if not os.path.exists(new_path+'block'+str(it)+'//'):
             os.makedirs(new_path+'block'+str(it)+'//')
         cv2.imwrite(new_path+'block'+str(it)+'//'+'block.png', imgROI)
@@ -150,7 +150,7 @@ def get_lines(img_path):
 
         imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
         cv2.imshow('line',imgROI)
-        intChar = cv2.waitKey(0)
+        cv2.waitKey(5000)
         if not os.path.exists(new_path+'line'+str(it)+'//'):
             os.makedirs(new_path+'line'+str(it)+'//')
         cv2.imwrite(new_path+'line'+str(it)+'//'+'line.png', imgROI)
@@ -158,8 +158,8 @@ def get_lines(img_path):
         kt= kt+" "+result
         it+=1
 
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
     ###################################################################################
     #os.remove(temp)
     return kt
@@ -186,7 +186,7 @@ ltn= get_blocks(new_path+"Driving_Document.png")                                
 print("-------DONE-------\n\n")
 answer= ""
 print('-----Start recognize Lines from block -----')
-for it in range(1,ltn+1):
+'''for it in range(1,ltn+1):
     new_path = src_path +"Driving Document//block"+str(it)+'//'
     #new_path = src_path +"Medical Report//block"+str(it)+'//'
     #new_path= src_path+ "Milstein-backing//block"+str(it)+'//'z
@@ -195,10 +195,10 @@ for it in range(1,ltn+1):
     #new_path = src_path + "Handwritten Recognition Using SVM, KNN and Neural Network//block" + str(it) + '//'
     #new_path = src_path + "ID CARD//block" + str(it) + '//'
     #new_path = src_path + "OCR_DOC//block" + str(it) + '//'
-    answer+=get_lines(new_path+'block.png')
+    #answer+=get_lines(new_path+'block.png')
 print("-------Lines Extracted-------\n\n")
 
-print(answer)
+print(answer)'''
 
 '''f = open('OutputText.txt','w')
 f.write(answer)
