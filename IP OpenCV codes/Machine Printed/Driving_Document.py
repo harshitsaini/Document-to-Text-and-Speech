@@ -111,7 +111,7 @@ def get_blocks(img_path):
 
         imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
         cv2.imshow('block',imgROI)
-        intChar = cv2.waitKey(0)
+        intChar = cv2.waitKey(5000)
         if not os.path.exists(new_path+'block'+str(it)+'//'):
             os.makedirs(new_path+'block'+str(it)+'//')
         cv2.imwrite(new_path+'block'+str(it)+'//'+'block.png', imgROI)
@@ -186,7 +186,7 @@ ltn= get_blocks(new_path+"Driving_Document.png")                                
 print("-------DONE-------\n\n")
 answer= ""
 print('-----Start recognize Lines from block -----')
-'''for it in range(1,ltn+1):
+for it in range(1,ltn+1):
     new_path = src_path +"Driving Document//block"+str(it)+'//'
     #new_path = src_path +"Medical Report//block"+str(it)+'//'
     #new_path= src_path+ "Milstein-backing//block"+str(it)+'//'z
@@ -195,10 +195,10 @@ print('-----Start recognize Lines from block -----')
     #new_path = src_path + "Handwritten Recognition Using SVM, KNN and Neural Network//block" + str(it) + '//'
     #new_path = src_path + "ID CARD//block" + str(it) + '//'
     #new_path = src_path + "OCR_DOC//block" + str(it) + '//'
-    #answer+=get_lines(new_path+'block.png')
+    answer+=get_lines(new_path+'block.png')
 print("-------Lines Extracted-------\n\n")
 
-print(answer)'''
+print(answer)
 
 '''f = open('OutputText.txt','w')
 f.write(answer)
