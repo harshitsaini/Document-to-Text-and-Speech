@@ -3,8 +3,10 @@ import math
 import numpy as np
 from PIL import Image
 from pytesseract import *
+from matplotlib import pyplot as plt
 
-src_path= 'C://Users//Harshit//Desktop//Machine Learning//Image Analysis//Output Images//Machine Printed//Spanish Images//Spanish2//'
+
+src_path= 'C://Users//Harshit//Desktop//Machine Learning//Image Analysis//Output Images//Machine Printed//Spanish Images//Spanish0//'
 
 def getThresholded(img,smooth_it):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -53,7 +55,8 @@ def getMorph(img,iterations,kernel_size,erode_it):
 def img_show(*args):
     for it,value in enumerate(args):
         cv2.imshow('Image Number: '+str(it),value)
-    cv2.waitKey(0)
+    #cv2.waitKey(0)
+    k = cv2.waitKey(0) & 0xFF
     cv2.destroyAllWindows()
 
 class disjoint_set:
@@ -63,9 +66,9 @@ class disjoint_set:
 
 class edge:
     def __init__(self):
-        self.u=-1
-        self.v=-1
-        self.w=-1
+        self.u=int(-1)
+        self.v=int(-1)
+        self.w=int(-1)
 
 def find_parent(dset,i):
     if dset[i].parent==-1:
@@ -81,10 +84,12 @@ def dsUnion(dset,x,y):
     else :
         dset[xroot].parent = yroot
         dset[yroot].rank += 1
+    return dset
 
 graph=2000000*[]
 #visited=[]
 tree=[]
+
 class Point:
     '''def __init__(self):
         self.x = 0;
@@ -95,24 +100,22 @@ class Point:
             self.x = 0; self.y = 0;  self.val = 0
 
         elif len(args)==2:
-            self.val=args[0]
-            self.width=args[1]
-            self.y = self.val / self.width
+            self.val=int(args[0])
+            self.width=int(args[1])
+            self.y = int(self.val / self.width)
             self.x = self.val % self.width
 
         else:
-            self.x=args[0]
-            self.y=args[1]
-            self.width= args[2]
-            self.val = self.y * self.width + self.x
-
+            self.x=int(args[0])
+            self.y=int(args[1])
+            self.width= int(args[2])
+            self.val = int(self.y * self.width + self.x)
 
 def dfs(u,p):
     tree.append(u)
     for v in graph[u]:
         if v!=p:
             dfs(v,u)
-
 
 # get subtrees in the given forest
 def getIslands(spanned):
@@ -136,18 +139,24 @@ def make_graph(edges):
 
 def getMST(edges,n):
     edges.sort(key=lambda item: item.w)
-    for i in range(20):
-        print(str(edges[i].u)+' '+str(edges[i].v)+' '+str(edges[i].w))
+    col= []
+    for val in edges:
+    	col.append(val.w)
+
+    plt.hist(col,normed= True)	
+    plt.show()
+
+    for i in range(1,20):
+    	print(str(edges[i].u)+' '+str(edges[i].v)+' '+str(edges[i].w))
 
     mst=[] ; st=0
-    dset = [disjoint_set() for i in range(n)]
+    dset = [disjoint_set() for i in range(int(n))]
     kt=0
-    for it in range(n):
-        kt+=1
+    for it in range(int(n/2)):
         while (find_parent(dset,edges[st].u)==find_parent(dset,edges[st].v) and (st<n)): st+=1
-        if(st>=n): break
+        if(st>=n): kt+=1;break
         x = edges[st].u ; y = edges[st].v ;   wt = edges[st].w
-        dsUnion(dset,x,y)
+        dset=dsUnion(dset,x,y)
         mst.append([x,y]) ; st+=1
     print('ok '+str(len(mst))+' '+str(kt))
     return mst
@@ -155,9 +164,10 @@ def getMST(edges,n):
 def getSpannedTrees(img):
     height, width = img.shape
     n= height*width ; m=0
+    print("Total number of points"+str(n))
     edges = [edge() for i in range(n*4)]
     for yt in range(height-1):
-        for xt in range(width):
+        for xt in range(width-1):
             w = abs(img[yt,xt]-img[yt+1,xt])
             p1 = Point(xt,yt,width)
             p2 = Point(xt,yt+1,width)
@@ -165,7 +175,7 @@ def getSpannedTrees(img):
             edges[m].u = u; edges[m].v = v;
             edges[m].w = w;  m += 1
     for xt in range(width-1):
-        for yt in range(height):
+        for yt in range(height-1):
             w = abs(img[yt, xt] - img[yt, xt+1])
             p1 = Point(xt,yt,width)
             p2 = Point(xt+1,yt,width)
@@ -174,17 +184,33 @@ def getSpannedTrees(img):
             edges[m].w = w;  m += 1
     print('DONE '+str(m))
     mst = getMST(edges[0:m], n)
-    print(len(mst))
-    return mst
+    print("Edges in mst:"+str(len(mst)))
+    imat =np.array(n*[n*[1]])
+    #plt.imshow(imat)
+    #cv2.imwrite(src_path+'road.png',imat)
+    #for val in mst:
+
+    return imat
 
 
 def make_it_work():
-    img= cv2.imread(src_path+'span2_img.png')
+    img= cv2.imread(src_path+'span_img.png')
+    #cv2.imshow("Original Image",img)
+    #plt.imshow(img,label='original')
+    #plt.show()
     thresh=getThresholded(img,False)
-    spanned= getSpannedTrees(thresh)
-    print('Spanned edges: '+str(len(spanned)))
-    forest=getIslands(spanned)
-    print(len(forest))
-    print(forest)
+    #plt.imshow(thresh,label='thresholded')
+    #plt.show()
 
-make_it_work()
+    spanned= getSpannedTrees(thresh)
+    #print('Spanned edges: '+str(len(spanned)))
+    #forest=getIslands(spanned)
+    #print(len(forest))
+    #print(forest)
+    return spanned
+
+mst= make_it_work()
+
+
+
+
