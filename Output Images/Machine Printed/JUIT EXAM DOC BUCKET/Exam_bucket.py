@@ -201,6 +201,6 @@ if __name__ == "__main__":
 	for line_id in range(len(line_image_bucket)):
 		cv2.imwrite("line"+str(line_id+1)+".png", line_image_bucket[line_id])
 
-	with open('Max_line_number','w') as file:
-		file.write(len(line_image_bucket))
+	with open('Max_line_number.txt','w') as file:
+		file.write(str(len(line_image_bucket)))
 		file.close()

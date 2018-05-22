@@ -69,3 +69,78 @@ def horizontal_dilation(img,iterations,kernel_size):
     dilated = cv2.dilate(img, kernel, iterations=iterations)
     cv2.imwrite(new_path + "dilated.png", dilated)
     return dilated
+
+def get_words(img_path):
+    ###########################CANNY EDGE DETECTION ###################################
+    img = cv2.imread(img_path)  ;        print(img.shape)
+    img = cv2.resize(img, (1465,1737)) ; print(img.shape)
+    thresholded= getThresholded(img,smooth_it=True)
+    opened= getOpened(thresholded,iterations=1,kernel_size=3)
+    edges = cv2.Canny(opened, 100, 200)
+    cv2.imwrite(new_path + 'canny.png', edges)
+    #cv2.imshow('Edges',edges)
+    ##############################DEFINING CONTOURS####################################
+    conditioned = getMorph(img=edges, iterations=5, kernel_size=7, erode_it=False)
+    final= conditioned
+    #[a, contours, c] = cv2.findContours(final, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    [a, contours, c] = cv2.findContours(final, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    print("No of text blocks detected are blocks :"+str(len(contours)))
+
+    #cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+    it=1
+    for npaContour in contours:
+        [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
+        cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),1)
+
+        imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
+        #cv2.imshow('block',imgROI)
+        #intChar = cv2.waitKey(3500)
+        if not os.path.exists(new_path+'block'+str(it)+'//'):
+            os.makedirs(new_path+'block'+str(it)+'//')
+        cv2.imwrite(new_path+'block'+str(it)+'//'+'block.png', imgROI)
+        it+=1    
+    ###################################################################################
+    print('Blocks Extracted !')
+    return len(contours)
+
+
+
+if __name__ == "__main__":
+
+
+	#####   Defining Working Directory  #####
+	old_cwd= os.getcwd()
+	new_cwd= src_path+'OS (T-1)2011//Overall Line Bucket//'
+
+	if not os.path.exists(new_cwd):
+		os.makedirs(new_cwd)
+	os.chdir(new_cwd)
+
+	print("Working Directory changed from "+old_cwd+ " to "+new_cwd)
+
+	##### Extracting upper limit of number of lines in whole document #####
+	Max_line_number=1
+	with open("Max_line_number.txt") as file:
+		Max_line_number= int(str(file.read()).strip())
+	print("Max_line_number is: "+str(Max_line_number))
+
+	word_number_bucket=[]
+
+
+	##### Extracting words from lines #####
+	for it in range(Max_line_number):
+		word_count= new_cwd+'line'+str(it+1)+'.png'
+		word_number_bucket.append(get_words(word_count)
+
+	cnt=0
+
+	Total_words= [cnt+=x for x in word_number_bucket]
+	print("Total number of words in whole document are:"+str(Total_words))
+
+
+
+
+
+
+
+
