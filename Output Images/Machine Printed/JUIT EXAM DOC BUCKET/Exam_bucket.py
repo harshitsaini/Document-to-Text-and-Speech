@@ -159,40 +159,48 @@ def get_lines(img_path): ### getting lines out of a block
     #os.remove(temp)
     return kt
 
-#new_path= src_path+"IOT(T-1)2018//"
-new_path= src_path+"OS (T-1)2011//"
-#new_path= src_path+"OS(T-1)2013//"
 
-print('\n-----Start recognize text blocks from image -----')
-#ltn= get_blocks(new_path+"IOT(T-1)2018-1.png")
-ltn= get_blocks(new_path+"OS (T-1)2011-1.png")
-#ltn= get_blocks(new_path+"OS(T-1)2013-2.png")
 
-print("-------DONE-------\n\n")
-answer= ""
-print('-----Start recognize Lines from block -----')
-for it in range(1,ltn+1):
-    #new_path = src_path +"IOT(T-1)2018//block"+str(it)+'//'
-    new_path = src_path +"OS (T-1)2011//block"+str(it)+'//'
-    #new_path = src_path +"OS(T-1)2013//block"+str(it)+'//'
-    answer+=get_lines(new_path+'block.png')
-print("-------Lines Extracted-------\n\n")
+if __name__ == "__main__":
+	print('Hello is this something ???')
+	#new_path= src_path+"IOT(T-1)2018//"
+	new_path= src_path+"OS (T-1)2011//"
+	#new_path= src_path+"OS(T-1)2013//"
 
-from pprint import pprint
+	print('\n-----Start recognize text blocks from image -----')
+	#ltn= get_blocks(new_path+"IOT(T-1)2018-1.png")
+	ltn= get_blocks(new_path+"OS (T-1)2011-1.png")
+	#ltn= get_blocks(new_path+"OS(T-1)2013-2.png")
 
-' '.join(answer.split())
+	print("-------DONE-------\n\n")
+	answer= ""
+	print('-----Start recognize Lines from block -----')
+	for it in range(1,ltn+1):
+		#new_path = src_path +"IOT(T-1)2018//block"+str(it)+'//'
+		new_path = src_path +"OS (T-1)2011//block"+str(it)+'//'
+		#new_path = src_path +"OS(T-1)2013//block"+str(it)+'//'
+		answer+=get_lines(new_path+'block.png')
+		print("-------Lines Extracted-------\n\n")
 
-pprint(answer)
+	from pprint import pprint
+	' '.join(answer.split())
+	pprint(answer)
 
-with open('output_text.txt','w') as file:
-	for data in answer:
-		file.write(data)
-	file.close()
+	with open('output_text.txt','w') as file:
+		for data in answer:
+			file.write(data)
+		file.close()
 
-new_cwd= src_path+'OS (T-1)2011//Overall Line Bucket//'
 
-if not os.path.exists(new_cwd):
-            os.makedirs(new_cwd)
-os.chdir(new_cwd)
-for line_id in range(len(line_image_bucket)):
-	cv2.imwrite("line"+str(line_id+1)+".png", line_image_bucket[line_id])
+	new_cwd= src_path+'OS (T-1)2011//Overall Line Bucket//'
+
+	if not os.path.exists(new_cwd):
+		os.makedirs(new_cwd)
+	os.chdir(new_cwd)
+
+	for line_id in range(len(line_image_bucket)):
+		cv2.imwrite("line"+str(line_id+1)+".png", line_image_bucket[line_id])
+
+	with open('Max_line_number','w') as file:
+		file.write(len(line_image_bucket))
+		file.close()
