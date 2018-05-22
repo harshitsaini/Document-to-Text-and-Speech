@@ -23,6 +23,7 @@ tessdata_dir_config = '--tessdata-dir "H:\\Program Files (x86)\\Tesseract-OCR\\t
     #os.makedirs(directory)
 
 answer=""
+line_image_bucket=[]
 ex_fl= "" ; new_path="" ; block_path="" ; line_path=""
 def getThresholded(img,smooth_it):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -142,6 +143,7 @@ def get_lines(img_path): ### getting lines out of a block
         #cv2.rectangle(img,(intX, intY),(intX+intW,intY+intH),(0, 0, 255),2)
 
         imgROI = np.asarray(img[intY:intY+intH, intX:intX+intW])
+        line_image_bucket.append(imgROI)
         #cv2.imshow('line'+str(it),imgROI)
         #cv2.waitKey(3000)
         if not os.path.exists(new_path+'line'+str(it)+'//'):
@@ -176,8 +178,21 @@ for it in range(1,ltn+1):
     answer+=get_lines(new_path+'block.png')
 print("-------Lines Extracted-------\n\n")
 
-print(answer)
+from pprint import pprint
 
-'''f = open('OutputText.txt','w')
-f.write(answer)
-f.close()'''
+' '.join(answer.split())
+
+pprint(answer)
+
+with open('output_text.txt','w') as file:
+	for data in answer:
+		file.write(data)
+	file.close()
+
+new_cwd= src_path+'OS (T-1)2011//Overall Line Bucket//'
+
+if not os.path.exists(new_cwd):
+            os.makedirs(new_cwd)
+os.chdir(new_cwd)
+for line_id in range(len(line_image_bucket)):
+	cv2.imwrite("line"+str(line_id+1)+".png", line_image_bucket[line_id])
