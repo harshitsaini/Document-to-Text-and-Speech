@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: doc2speech
+Version: 0.0.1
+Summary: Python package for online kannada optical character recognition
+Home-page: UNKNOWN
+Author: Harshit Saini
+Author-email: harshitsaini15@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Keywords: gtts OpenCV
+Platform: UNKNOWN

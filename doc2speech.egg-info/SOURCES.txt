@@ -1,0 +1,11 @@
+README.md
+setup.py
+doc2speech/__init__.py
+doc2speech/ocr.py
+doc2speech/tts.py
+doc2speech/utilities.py
+doc2speech.egg-info/PKG-INFO
+doc2speech.egg-info/SOURCES.txt
+doc2speech.egg-info/dependency_links.txt
+doc2speech.egg-info/requires.txt
+doc2speech.egg-info/top_level.txt
