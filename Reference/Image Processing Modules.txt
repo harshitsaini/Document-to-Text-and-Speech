@@ -1,9 +1,0 @@
-http://www.geeksforgeeks.org/project-idea-character-recognition-from-image/
-https://www.youtube.com/results?search_query=mathematical+morphology
-https://www.youtube.com/results?search_query=neighbourhood+operations+in+image+processing
-http://www.viz.tamu.edu/faculty/parke/ends489f00/notes/sec1_8.html
-http://www.geeksforgeeks.org/image-manipulation-using-quadtrees/
-https://in.mathworks.com/help/wavelet/denoising.html
-https://www.youtube.com/playlist?list=PL4B3F8D4A5CAD8DA3
-https://www.youtube.com/playlist?list=PLfvrQApXiNsVtByxU_uMgWAsn9E4xx-gq
-http://www.visionmetric.com/
