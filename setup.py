@@ -6,7 +6,7 @@ setup(
     name = 'doc2speech',
     version ='0.0.1',
     packages =find_packages(),
-    description = 'Python package for online kannada optical character recognition',
+    description = 'Library to transfer image document to text and speech document.',
     # url = '',
     author = 'Harshit Saini',
     # license = 'MIT',
