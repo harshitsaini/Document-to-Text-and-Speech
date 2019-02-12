@@ -1,4 +1,5 @@
-# Advanced-Optical-Character-Recognizer(Document-to-Text-and-Speech)
+# Advanced-Optical-Character-Recognizer
+# (Document-to-Text-and-Speech)
 
 ### Make a shallow clone of the repository in system's local environment.
 > git clone https://github.com/harshitsaini/Document-to-Text-and-Speech.git --depth 1
