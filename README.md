@@ -16,13 +16,13 @@ import doc2speech
 if __name__ == '__main__':
   
   # Path of the folder where document image is present
-  doc_path    = "/home/harold/Desktop/"
+  doc_path    = "/path/to/documentImage/"
   
   # Name of the document image to be converted
   docName     = 'doc.png'
   
   # Path of the folder where output has to be generated
-  output_path = "/home/harold/Desktop/"
+  output_path = "/path/to/output/"
    
   doc2speech.performConversion(doc_path    = doc_path,
                                docName     = docName,
