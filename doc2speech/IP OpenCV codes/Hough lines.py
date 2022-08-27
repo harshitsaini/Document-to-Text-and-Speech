@@ -1,18 +1,19 @@
 import cv2
 import numpy as np
-src_path= 'C://Users//Harshit//Desktop//Initial_img//Edge_detection&Gradiants//'
+
+src_path = "C://Users//Harshit//Desktop//Initial_img//Edge_detection&Gradiants//"
 # Reading the required image in
 # which operations are to be done.
 # Make sure that the image is in the same
 # directory in which this python program is
-img = cv2.imread(src_path+'7ab_original.jpg')
-'''
+img = cv2.imread(src_path + "7ab_original.jpg")
+"""
 # Convert the img to grayscale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Apply edge detection method on the image
-'''
-'''
+"""
+"""
 edges = cv2.Canny(img, 100, 150, apertureSize=3)
 #print(edges)
 #edges= cv2.imread(src_path+'s.png')
@@ -58,13 +59,28 @@ for kt in lines:
 # All the changes made in the input image are finally
 # written on a new image houghlines.jpg
 cv2.imwrite(src_path+'houghlines3.jpg', img)
-'''
-edges = cv2.Canny(img,50,150,apertureSize = 3)
-cv2.imwrite(src_path+'hough.png',edges)
-minLineLength=150
-lines = cv2.HoughLinesP(image=edges,rho=1,theta=np.pi/180, threshold=100,lines=np.array([]), minLineLength=minLineLength,maxLineGap=80)
+"""
+edges = cv2.Canny(img, 50, 150, apertureSize=3)
+cv2.imwrite(src_path + "hough.png", edges)
+minLineLength = 150
+lines = cv2.HoughLinesP(
+    image=edges,
+    rho=1,
+    theta=np.pi / 180,
+    threshold=100,
+    lines=np.array([]),
+    minLineLength=minLineLength,
+    maxLineGap=80,
+)
 
-a,b,c = lines.shape
+a, b, c = lines.shape
 for i in range(a):
-    cv2.line(edges, (lines[i][0][0], lines[i][0][1]), (lines[i][0][2], lines[i][0][3]), (0, 0, 255), 3, cv2.LINE_AA)
-    cv2.imwrite(src_path+'houghlines5.jpg',edges)
+    cv2.line(
+        edges,
+        (lines[i][0][0], lines[i][0][1]),
+        (lines[i][0][2], lines[i][0][3]),
+        (0, 0, 255),
+        3,
+        cv2.LINE_AA,
+    )
+    cv2.imwrite(src_path + "houghlines5.jpg", edges)
